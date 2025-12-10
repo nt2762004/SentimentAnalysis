@@ -1,4 +1,4 @@
-# MidTerm NLP Project - Sentiment Analysis
+# Sentiment Analysis
 
 Dự án này bao gồm mã nguồn Python (Jupyter Notebook) để thực hiện quy trình phân tích cảm xúc văn bản (Sentiment Analysis), từ tiền xử lý dữ liệu, trích xuất đặc trưng đến xây dựng mô hình dự đoán sử dụng cả Machine Learning truyền thống và Deep Learning (BERT).
 
