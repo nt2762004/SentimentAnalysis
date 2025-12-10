@@ -16,8 +16,6 @@ Dự án này bao gồm mã nguồn Python (Jupyter Notebook) để thực hiệ
     └── PositiveGenData/
 ```
 
-## Chi tiết Notebook
-
 ### `SentimentPredict.ipynb` (Phân tích Cảm xúc)
 Notebook này thực hiện toàn bộ quy trình xây dựng hệ thống phân tích cảm xúc.
 
