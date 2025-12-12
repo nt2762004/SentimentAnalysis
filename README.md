@@ -1,67 +1,51 @@
-# GPT Machine Translate
+# Sentiment Analysis
 
-Dự án này thực hiện dịch máy (Machine Translation) Anh-Việt sử dụng kiến trúc GPT (Generative Pre-trained Transformer). Dự án bao gồm cả phương pháp huấn luyện từ đầu (training from scratch) và tinh chỉnh mô hình đã huấn luyện trước (fine-tuning pretrained model).
+Dự án này bao gồm mã nguồn Python (Jupyter Notebook) để thực hiện quy trình phân tích cảm xúc văn bản (Sentiment Analysis), từ tiền xử lý dữ liệu, trích xuất đặc trưng đến xây dựng mô hình dự đoán sử dụng cả Machine Learning truyền thống và Deep Learning (BERT).
 
 ## Cấu trúc Thư mục
 
 ```
-├── gpt-mt-pre.ipynb              # Notebook fine-tuning GPT-2
-├── gpt-mt.ipynb                  # Notebook training GPT from scratch
-├── Link_GPT_MachineTranslate.txt # Link Kaggle
+├── SentimentPredict.ipynb        # Notebook chính cho huấn luyện và dự đoán
+├── negative_sentiment_data.json  # Dữ liệu mẫu tiêu cực
+├── neutral_sentiment_data.json   # Dữ liệu mẫu trung tính
+├── positive_sentiment_data.json  # Dữ liệu mẫu tích cực
 ├── README.md                     # File mô tả dự án
-├── en-vi.txt/                    # Dữ liệu song ngữ gốc (TED2020)
-└── Train_spm/                    # Thư mục huấn luyện SentencePiece Tokenizer
-    ├── Train_spm.ipynb           # Notebook huấn luyện tokenizer
-    ├── ted2020_spm.model         # Model tokenizer
-    └── ...
+└── Task 1/                       # Thư mục chứa dữ liệu phân loại và script generate data bằng LLM
+    ├── NegativeGenData/
+    ├── NeutralGenData/
+    └── PositiveGenData/
 ```
 
-### `Train_spm/Train_spm.ipynb` (Chuẩn bị dữ liệu & Tokenizer)
-Notebook này thực hiện các bước tiền xử lý và chuẩn bị tokenizer cho mô hình.
+### `SentimentPredict.ipynb` (Phân tích Cảm xúc)
+Notebook này thực hiện toàn bộ quy trình xây dựng hệ thống phân tích cảm xúc.
 
-*   **Mục tiêu:** Làm sạch dữ liệu văn bản và huấn luyện mô hình SentencePiece Tokenizer.
+*   **Mục tiêu:** Phân loại văn bản thành 3 nhãn cảm xúc: **Positive** (Tích cực), **Negative** (Tiêu cực), **Neutral** (Trung tính).
 *   **Các bước chính:**
+    *   **Load dữ liệu:** Đọc dữ liệu từ các file JSON tương ứng với từng nhãn.
     *   **Tiền xử lý (Preprocessing):**
         *   Chuyển văn bản về chữ thường.
-        *   Loại bỏ các ký tự đặc biệt không cần thiết, chuẩn hóa khoảng trắng.
-    *   **Tokenization:**
-        *   Huấn luyện tokenizer riêng trên tập dữ liệu TED2020 sử dụng thư viện `sentencepiece`.
-        *   Tạo ra bộ từ vựng (vocab) và mô hình tokenizer (`.model`).
-
-### `gpt-mt.ipynb` (Training from Scratch)
-Notebook này triển khai và huấn luyện mô hình GPT từ đầu (Non-pretrained).
-
-*   **Mục tiêu:** Xây dựng và huấn luyện mô hình Transformer Decoder cho tác vụ dịch máy.
-*   **Các bước chính:**
-    *   **Load Tokenizer:** Sử dụng tokenizer đã tạo từ bước trước.
-    *   **Định dạng dữ liệu:** Chuẩn bị cặp câu `Source: [English] Target: [Vietnamese]`.
-    *   **Xây dựng Mô hình:**
-        *   Kiến trúc Transformer Decoder (Embedding, Positional Encoding, Multi-head Self-Attention, Feed Forward Network).
-    *   **Huấn luyện:**
-        *   Sử dụng hàm mất mát **CrossEntropyLoss** và tối ưu hóa **AdamW**.
-        *   Áp dụng **Teacher Forcing**.
-    *   **Đánh giá:**
-        *   Sử dụng **BLEU Score** để đánh giá độ chính xác.
-        *   Inference bằng phương pháp Greedy Search.
-
-### `gpt-mt-pre.ipynb` (Fine-tuning GPT-2)
-Notebook này sử dụng mô hình GPT-2 đã được huấn luyện trước để tinh chỉnh cho tác vụ dịch.
-
-*   **Mục tiêu:** Tận dụng tri thức từ mô hình Pretrained để cải thiện chất lượng dịch.
-*   **Các bước chính:**
-    *   **Load Pretrained Model:** Sử dụng `GPT2LMHeadModel` và `GPT2Tokenizer` từ thư viện `transformers`.
-    *   **Fine-tuning:** Tinh chỉnh trọng số mô hình trên tập dữ liệu Anh-Việt.
-    *   **Đánh giá:** Sử dụng **ROUGE Score** để đánh giá độ bao phủ.
+        *   Loại bỏ ký tự đặc biệt và khoảng trắng thừa.
+        *   Loại bỏ **Stopwords** (nhưng giữ lại các từ phủ định quan trọng như "not", "never").
+    *   **Trích xuất đặc trưng (Feature Extraction):**
+        *   **Bag of Words (BoW):** Đếm tần suất từ.
+        *   **TF-IDF:** Đánh giá trọng số quan trọng của từ.
+    *   **Huấn luyện mô hình Machine Learning:**
+        *   Thử nghiệm các mô hình: **Naive Bayes**, **Logistic Regression**, **Random Forest**.
+        *   So sánh hiệu quả giữa BoW và TF-IDF.
+    *   **Kiểm tra Overfitting:**
+        *   So sánh độ chính xác trên tập Train và Test.
+        *   Vẽ biểu đồ trực quan hóa kết quả.
+    *   **Huấn luyện mô hình Deep Learning (BERT):**
+        *   Sử dụng mô hình ngôn ngữ tiền huấn luyện **BERT (bert-base-uncased)**.
+        *   Fine-tune mô hình trên tập dữ liệu cảm xúc.
+        *   Sử dụng `Trainer` API của Hugging Face để huấn luyện và đánh giá.
+    *   **Dự đoán:**
+        *   Hàm dự đoán để kiểm tra kết quả từ mô hình.
 
 ## Yêu cầu cài đặt
 
-Để chạy các notebook này, cần cài đặt các thư viện Python sau:
+Để chạy notebook này, cần cài đặt các thư viện Python sau:
 
 ```bash
-pip install torch transformers sentencepiece nltk numpy
+pip install numpy matplotlib scikit-learn nltk transformers torch
 ```
-
-## Link Kaggle
-
-*   [Non-pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt)
-*   [Pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt-pre)
